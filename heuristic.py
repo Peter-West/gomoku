@@ -124,8 +124,7 @@ def makeDig(mapping, player):
 				elif(e == -1):
 					str1 += 'x'
 		diagonal.append(str1)
-	dig = [matrix.diagonal(i) for i in range(matrix.shape[1]-5,
-                                             -matrix.shape[1] + 4, -1)]
+	dig = [mapping.diagonal(i) for i in range(mapping.shape[1]-5, -mapping.shape[1] + 4, -1)]
 	for i in dig:
 		str1 = ''
 		for e in i:
@@ -147,9 +146,9 @@ def makeDig(mapping, player):
 	return diagonal
 
 
-def makeLin(matrix, player):
+def makeLin(mapping, player):
 	line = []
-	for i in matrix:
+	for i in mapping:
 		str1 = ''
 		for e in i:
 			if player == 1:
@@ -170,9 +169,9 @@ def makeLin(matrix, player):
 	return line
 
 
-def makeCol(matrix, player):
+def makeCol(mapping, player):
 	col = []
-	matrix = matrix.copy().T
+	matrix = mapping.copy().T
 	for i in matrix:
 		str1 = ''
 		for e in i:
