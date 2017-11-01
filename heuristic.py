@@ -36,6 +36,25 @@ HEURISTIC = [[0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 
              [0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0],
              [0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0, 0, 0, 0, 0]]
 
+
+def not2T(move, mapping, player=1):
+	map2 = mapping.copy()
+	count = 0
+	map2[move[0]][move[1]] = player
+	count += search(makeDig(map2, player), 'exxxe')
+	count += search(makeCol(map2, player), 'exxxe')
+	count += search(makeLin(map2, player), 'exxxe')
+	count += search(makeDig(map2, player), 'exxexe')
+	count += search(makeCol(map2, player), 'exxexe')
+	count += search(makeLin(map2, player), 'exxexe')
+	count += search(makeDig(map2, player), 'exexxe')
+	count += search(makeCol(map2, player), 'exexxe')
+	count += search(makeLin(map2, player), 'exexxe')
+	if count > 1:
+		return False
+	else:
+		return True
+
 def winner(mapping, player, forwin='xxxxx'):
 	map2 = mapping.copy()
 	count = 0
@@ -69,7 +88,7 @@ def calculH(mapping,player, val_H = UTILITY, pos_val_H = HEURISTIC):
 	else:
 		np.place(map2, map2 == 1, 0)
 		pos_H = -np.sum(np.multiply(map2, pos_val_H))
-#	print("pos_h: ", pos_H)
+	#print("pos_h: ", pos_H)
 	heuristic_val = pos_H + seq_H
 #	print(heuristic_val)
 	total = heuristic_val
@@ -100,6 +119,7 @@ def calculH(mapping,player, val_H = UTILITY, pos_val_H = HEURISTIC):
 #	print("pos_h: ", pos_H)
 	heuristic_val = pos_H + seq_H
 #	print(heuristic_val)
+#	print(total -1.05 * heuristic_val)
 	return total - 1.05 * heuristic_val
 
 

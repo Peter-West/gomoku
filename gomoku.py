@@ -1,7 +1,7 @@
 import numpy as np
 
 from min_max import minmax
-from heuristic import winner, calculH
+from heuristic import winner, calculH, not2T
 
 class Stade(object):
 	def __init__(self, mapping, player):
@@ -47,8 +47,11 @@ class Stade(object):
 			for col in center_to_borderW:
 				if (proxim_mapping[row][col] % 3 == 0 and proxim_mapping[row][col] > 0):
 					move = [row, col]
-					self._available_moves.append(move)
-#		print(self._available_moves)
+#####################################################
+					if not2T(move, self.mapping) is True:
+#####################################################
+						self._available_moves.append(move)
+	#	print(self._available_moves)
 		return self._available_moves
 		
 	def next_state(self, move):
@@ -93,15 +96,23 @@ class Gomoku:
 				elif y == -1: print("\033[34mO\033[0m", end = "")
 			print("\n", end = "")
 		print("\n", end = "")
+
+	def good_move(self, move):
+		if ((int(self.current.mapping[move[0]][move[1]]) == 0) and (not2T(move, self.current.mapping, self.current.player) == True)):
+			return True 
+		return False
 				
 
 	def loop_game(self):
 		while self.win == False:
+			self.goodmove = False
 			if self.player_1 == True:
-				move = input("choose coordonate ex: 4-6: ")
-				move = move.split("-")
-				move[0] = int(move[0])
-				move[1] = int(move[1])
+				while self.goodmove == False:
+					move = input("choose coordonate ex: 4-6: ")
+					move = move.split("-")
+					move[0] = int(move[0])
+					move[1] = int(move[1])
+					self.goodmove = self.good_move(move)
 				self.current.mapping[move[0]][move[1]] = self.current.player
 
 			if self.player_1 == False:
@@ -116,11 +127,14 @@ class Gomoku:
 				break
 			self.current.player = -1*self.current.player
 
+			self.goodmove = False
 			if self.player_2 == True:
-				move = input("choose coordonate ex: 4-6: ")
-				move = move.split("-")
-				move[0] = int(move[0])
-				move[1] = int(move[1])
+				while self.goodmove == False:
+					move = input("choose coordonate ex: 4-6: ")
+					move = move.split("-")
+					move[0] = int(move[0])
+					move[1] = int(move[1])
+					self.goodmove = self.good_move(move)
 				self.current.mapping[move[0]][move[1]] = self.current.player
 
 			if self.player_2 == False:
