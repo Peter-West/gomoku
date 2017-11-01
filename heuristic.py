@@ -4,6 +4,8 @@ import regex as re
 
 UTILITY = {'Q': [20000000, ['xxxxx']],
            'Q2': [400000, ['exxxxe']],
+		   'Cap_ok':[500000, ['xnnxe', 'exnnx', 'nxnnx', 'xnnxn']],
+		   'Cap':[200000, ['xnnee', 'eennx', 'eennx', 'xnnee', 'xnnen', 'nennx']],
            'Q1': [50000, ['nxxxxe', 'exxxxn']],
            'T2': [30000, ['exxxe']],
            'T1': [15000, ['nxxxee', 'eexxxn']],

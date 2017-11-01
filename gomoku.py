@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 from min_max import minmax
 from heuristic import winner, calculH, not2T
@@ -75,6 +76,9 @@ class Gomoku:
 	def __init__(self):
 		init_map = np.zeros((19,19))
 		player = 1
+		self.round_game = 60
+		self.cap_1 = 0
+		self.cap_2 = 0
 		self.current = Stade(init_map, 1)
 		nb_player = int(input("combien de joueur humain 0-1-2 ? "))
 		self.win = False
@@ -96,15 +100,90 @@ class Gomoku:
 				elif y == -1: print("\033[34mO\033[0m", end = "")
 			print("\n", end = "")
 		print("\n", end = "")
+		print("\033[31mNumber capture player 1 : \033[0m", self.cap_1)
+		print("\033[31mNumber capture player 2 : \033[0m", self.cap_2)
 
 	def good_move(self, move):
 		if ((int(self.current.mapping[move[0]][move[1]]) == 0) and (not2T(move, self.current.mapping, self.current.player) == True)):
 			return True 
 		return False
 				
+	def capturing(self, move):
+		map2 = self.current.mapping
+		play = self.current.player
+		if move[0] - 3 >= 0:
+			if map2[move[0] - 1][move[1]] == -1*play and map2[move[0] - 2][move[1]] == -1*play and map2[move[0] - 3][move[1]] == play:
+				self.current.mapping[move[0] -1][move[1]] = 0
+				self.current.mapping[move[0] -2][move[1]] = 0
+				if self.current.player == 1:
+					self.cap_1 += 1
+				else:
+					self.cap_2 += 1
+			
+		if move[0] + 3 <= 18:
+			if map2[move[0] + 1][move[1]] == -1*play and map2[move[0] + 2][move[1]] == -1*play and map2[move[0] + 3][move[1]] == play:
+				self.current.mapping[move[0] +1][move[1]] = 0
+				self.current.mapping[move[0] +2][move[1]] = 0
+				if self.current.player == 1:
+					self.cap_1 += 1
+				else:
+					self.cap_2 += 1
+				
+		if move[1] - 3 >= 0:
+			if map2[move[0]][move[1] -1] == -1*play and map2[move[0]][move[1] -2] == -1*play and map2[move[0]][move[1] -3] == play:
+				self.current.mapping[move[0]][move[1] -1] = 0
+				self.current.mapping[move[0]][move[1] -2] = 0
+				if self.current.player == 1:
+					self.cap_1 += 1
+				else:
+					self.cap_2 += 1
+			
+		if move[1] + 3 <= 18:
+			if map2[move[0]][move[1] +1] == -1*play and map2[move[0]][move[1] +2] == -1*play and map2[move[0]][move[1] +3] == play:
+				self.current.mapping[move[0]][move[1] +1] = 0
+				self.current.mapping[move[0]][move[1] +2] = 0
+				if self.current.player == 1:
+					self.cap_1 += self.cap_1
+				else:
+					self.cap_2 += self.cap_2
+				
+		if move[0] - 3 >= 0 and move[1] - 3 >=0:
+			if map2[move[0] - 1][move[1] -1] == -1*play and map2[move[0] - 2][move[1] -2] == -1*play and map2[move[0] - 3][move[1] -3] == play:
+				self.current.mapping[move[0] -1][move[1] -1] = 0
+				self.current.mapping[move[0] -2][move[1] -2] = 0
+				if self.current.player == 1:
+					self.cap_1 += 1
+				else:
+					self.cap_2 += 1
+				
+		if move[0] - 3 >= 0 and move[1] + 3 <=18:
+			if map2[move[0] - 1][move[1] +1] == -1*play and map2[move[0] - 2][move[1] +2] == -1*play and map2[move[0] - 3][move[1] +3] == play:
+				self.current.mapping[move[0] -1][move[1] +1] = 0
+				self.current.mapping[move[0] -2][move[1] +2] = 0
+				if self.current.player == 1:
+					self.cap_1 += 1
+				else:
+					self.cap_2 += 1
+		if move[1] + 3 <= 18 and move[0] +3 <=18:
+			if map2[move[0]+1][move[1] +1] == -1*play and map2[move[0]+2][move[1] +2] == -1*play and map2[move[0]+3][move[1] +3] == play:
+				self.current.mapping[move[0]+1][move[1] +1] = 0
+				self.current.mapping[move[0]+2][move[1] +2] = 0
+				if self.current.player == 1:
+					self.cap_1 += self.cap_1
+				else:
+					self.cap_2 += self.cap_2
 
+		if move[1] - 3 >= 0 and move[0] +3 <=18:
+			if map2[move[0]+1][move[1] -1] == -1*play and map2[move[0]+2][move[1] -2] == -1*play and map2[move[0]+3][move[1] -3] == play:
+				self.current.mapping[move[0]+1][move[1] -1] = 0
+				self.current.mapping[move[0]+2][move[1] -2] = 0
+				if self.current.player == 1:
+					self.cap_1 += self.cap_1
+				else:
+					self.cap_2 += self.cap_2
 	def loop_game(self):
-		while self.win == False:
+		while self.win == False and self.round_game !=0:
+			self.round_game -= 1
 			self.goodmove = False
 			if self.player_1 == True:
 				while self.goodmove == False:
@@ -113,18 +192,20 @@ class Gomoku:
 					move[0] = int(move[0])
 					move[1] = int(move[1])
 					self.goodmove = self.good_move(move)
+				self.capturing(move)
 				self.current.mapping[move[0]][move[1]] = self.current.player
 
 			if self.player_1 == False:
 				move = minmax(self.current)
 				#print("move:", move)
+				self.capturing(move)
 				self.current.mapping[move[0]][move[1]] = self.current.player
 
 			self.printing()
 			self.win = self.current.is_terminal()
-			if self.win == True:
+			if self.win == True or self.cap_1 >=5:
 				print("\033[31mWINNER PLAYER 1\033[0m")
-				break
+				sys.exit()
 			self.current.player = -1*self.current.player
 
 			self.goodmove = False
@@ -135,20 +216,25 @@ class Gomoku:
 					move[0] = int(move[0])
 					move[1] = int(move[1])
 					self.goodmove = self.good_move(move)
+				self.capturing(move)
 				self.current.mapping[move[0]][move[1]] = self.current.player
 
 			if self.player_2 == False:
 				move = minmax(self.current)
 				#print("move:", move)
+				self.capturing(move)
 				self.current.mapping[move[0]][move[1]] = self.current.player
 			
 			self.printing()
 			self.win = self.current.is_terminal()
-			if self.win == True:
+			if self.win == True or self.cap_2 >=5:
 				print("\033[31mWINNER PLAYER 2\033[0m")
-				break
+				sys.exit()
 			self.current.player = -1*self.current.player
-		
+	
+		if self.win == False and self.round_game <= 0:	
+			print("\033[31DRAWWWWWWWWWWWWWWWWW\033[0m")
+			sys.exit()
 	
 if __name__ == '__main__':
 	partie = Gomoku()
